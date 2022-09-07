@@ -13,9 +13,13 @@ config = configparser.ConfigParser()
 tmdb.API_KEY = "b5387ae681ba752fdfde05251bc48724"
 tmdb.REQUESTS_TIMEOUT = 5
 
-MOVIE_DIR_1 = "/Volumes/TOSHIBA R4/movie/1"
-MOVIE_DIR_2 = "/Volumes/TOSHIBA R4/movie/2.CHN"
-MOVIE_DIR_3 = "/Volumes/TOSHIBA R4/movie/3.HK"
+# MOVIE_DIR_1 = "/Volumes/TOSHIBA R4/movie/1"
+# MOVIE_DIR_2 = "/Volumes/TOSHIBA R4/movie/2.CHN"
+# MOVIE_DIR_3 = "/Volumes/TOSHIBA R4/movie/3.HK"
+
+MOVIE_DIR_1 = "E:\\movie\\1"
+MOVIE_DIR_2 = "E:\\movie\\2.CHN"
+MOVIE_DIR_3 = "E:\\movie\\3.HK"
 
 IMAGE_HOST = "https://image.tmdb.org/t/p/original"
 
