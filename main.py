@@ -20,6 +20,7 @@ tmdb.REQUESTS_TIMEOUT = 5
 MOVIE_DIR_1 = "E:\\movie\\1"
 MOVIE_DIR_2 = "E:\\movie\\2.CHN"
 MOVIE_DIR_3 = "E:\\movie\\3.HK"
+MOVIE_DIR_5 = "E:\\movie\\5.KOR-JP"
 
 IMAGE_HOST = "https://image.tmdb.org/t/p/original"
 
@@ -175,3 +176,4 @@ if __name__ == "__main__":
     scan(MOVIE_DIR_1)
     scan(MOVIE_DIR_2)
     scan(MOVIE_DIR_3)
+    scan(MOVIE_DIR_5)
