@@ -82,12 +82,13 @@ def scan(movie_dir_path):
         target_r = None
         for r in search.results:
             _zh_title = r["title"]
-            _release_date = r["release_date"]
+            _release_date = r.get("release_date", "")
             _year = ""
             if len(_release_date) > 0:
                 _year = str(datetime.strptime(_release_date, "%Y-%m-%d").year)
 
-            is_filename_match = str_remove_punctuation(zh_title) == str_remove_punctuation(_zh_title)
+            is_filename_match = str_remove_punctuation(
+                zh_title) == str_remove_punctuation(_zh_title)
             is_year_match = "." + _year + "." in filename
             is_match = is_filename_match and is_year_match
             print("匹配检查", _zh_title, _release_date, is_match)
@@ -129,7 +130,8 @@ def scan(movie_dir_path):
             poster_url = IMAGE_HOST + poster_path
             poster_filename = os.path.basename(poster_path)
             _, poster_suffix = os.path.splitext(poster_filename)
-            poster_loc = os.path.join(movie_dir_path, filename, "poster" + poster_suffix)
+            poster_loc = os.path.join(
+                movie_dir_path, filename, "poster" + poster_suffix)
             urllib.request.urlretrieve(poster_url, poster_loc)
             print("已下载海报 ===>", poster_loc)
 
