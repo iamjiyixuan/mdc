@@ -3,10 +3,15 @@ import re
 import shutil
 import configparser
 import urllib.request
+import argparse
 import tmdbsimple as tmdb
 from datetime import datetime
 from lxml import etree
 
+# 命令行参数解析
+parser = argparse.ArgumentParser(description='Process some integers.')
+parser.add_argument('--year', help='...')
+args = parser.parse_args()
 
 config = configparser.ConfigParser()
 
@@ -23,7 +28,6 @@ MOVIE_DIR_3 = "E:\\movie\\3.HK"
 MOVIE_DIR_5 = "E:\\movie\\5.KOR-JP"
 
 IMAGE_HOST = "https://image.tmdb.org/t/p/original"
-
 
 def str_remove_punctuation(target_str):
 
@@ -70,14 +74,16 @@ def scan(movie_dir_path):
 
         # 刮削
         search = tmdb.Search()
-        search.movie(query=zh_title, language="zh")
-        searchOk = len(search.results) > 0
+        search.movie(query=zh_title, language="zh", year=args.year)
+        searchOk = search.total_results > 0
 
         if not searchOk:
             print("搜索影片失败\r\n")
             continue
         else:
-            print("搜索结果数量 =", len(search.results))
+            print("搜索结果 当前页 =", search.page)
+            print("搜索结果 总页数 =", search.total_pages)
+            print("搜索结果 总条数 =", search.total_results)
 
         target_r = None
         for r in search.results:
