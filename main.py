@@ -4,13 +4,18 @@ import shutil
 import configparser
 import urllib.request
 import argparse
+import ffmpy
+import whisper
 import tmdbsimple as tmdb
 from datetime import datetime
 from lxml import etree
+from whisper.utils import write_srt
 
 # 命令行参数解析
 parser = argparse.ArgumentParser(description='Process some integers.')
+parser.add_argument('--verbose', action='store_true')
 parser.add_argument('--year', help='...')
+parser.add_argument('--whisper', action='store_true')
 args = parser.parse_args()
 
 config = configparser.ConfigParser()
@@ -28,6 +33,7 @@ MOVIE_DIR_3 = "E:\\movie\\3.HK"
 MOVIE_DIR_5 = "E:\\movie\\5.KOR-JP"
 
 IMAGE_HOST = "https://image.tmdb.org/t/p/original"
+
 
 def str_remove_punctuation(target_str):
 
@@ -178,6 +184,38 @@ def scan(movie_dir_path):
         shutil.move(videoPath, newVideoPath)
 
         print("\r\n")
+
+        if (args.whisper):
+            # 提取音频
+            tmpMp3FilePath = os.path.join(
+                movie_dir_path, filename, filename + ".mp3")
+            
+            outConfig = '-f mp3 -ar 16000 -hide_banner -loglevel error'
+            if args.verbose:
+                outConfig = '-f mp3 -ar 16000'
+
+            ff = ffmpy.FFmpeg(
+                inputs={newVideoPath: None},
+                outputs={
+                    tmpMp3FilePath: outConfig}
+            )
+            ff.run()
+            print("已生成临时mp3文件", "===>", tmpMp3FilePath)
+
+            # 生成字幕
+            print("正在生成字幕...")
+            model = whisper.load_model("base", device="cuda")
+            result = model.transcribe(
+                # why set beam_size and best_of? @see https://github.com/openai/whisper/discussions/177
+                tmpMp3FilePath, language="English", beam_size=5, best_of=5, verbose=args.verbose)
+            srtFilePath = os.path.join(
+                movie_dir_path, filename, filename + ".srt")
+            with open(srtFilePath, "w", encoding="utf-8") as srt:
+                write_srt(result["segments"], file=srt)
+            print("已生成srt文件", "===>", srtFilePath)
+
+            os.remove(tmpMp3FilePath)
+            print("已删除临时mp3文件", "===>", tmpMp3FilePath)
 
 
 if __name__ == "__main__":

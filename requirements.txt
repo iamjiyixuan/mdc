@@ -1,3 +1,5 @@
 configparser
 tmdbsimple
 lxml
+ffmpy
+chardet
