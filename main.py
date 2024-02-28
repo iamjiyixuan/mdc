@@ -91,7 +91,7 @@ def scan(movie_dir_path):
             print("搜索结果 总条数 =", search.total_results)
         
         target_r = None
-        for page_index in range(1, search.total_pages):
+        for page_index in range(1, search.total_pages + 1):
             print("============================")
             print("搜索第", page_index, "页")
             search.movie(query=zh_title, language="zh", year=args.year, page=page_index)
