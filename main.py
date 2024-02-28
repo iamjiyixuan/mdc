@@ -9,7 +9,7 @@ import whisper
 import tmdbsimple as tmdb
 from datetime import datetime
 from lxml import etree
-from whisper.utils import write_srt
+# from whisper.utils import write_srt
 
 # 命令行参数解析
 parser = argparse.ArgumentParser(description='Process some integers.')
@@ -27,10 +27,10 @@ tmdb.REQUESTS_TIMEOUT = 5
 # MOVIE_DIR_2 = "/Volumes/TOSHIBA R4/movie/2.CHN"
 # MOVIE_DIR_3 = "/Volumes/TOSHIBA R4/movie/3.HK"
 
-MOVIE_DIR_1 = "E:\\movie\\1"
-MOVIE_DIR_2 = "E:\\movie\\2.CHN"
-MOVIE_DIR_3 = "E:\\movie\\3.HK"
-MOVIE_DIR_5 = "E:\\movie\\5.KOR-JP"
+MOVIE_DIR_1 = "D:\\movie\\1"
+MOVIE_DIR_2 = "D:\\movie\\2.CHN"
+MOVIE_DIR_3 = "D:\\movie\\3.HK"
+MOVIE_DIR_5 = "D:\\movie\\5.KOR-JP"
 
 IMAGE_HOST = "https://image.tmdb.org/t/p/original"
 
@@ -87,27 +87,38 @@ def scan(movie_dir_path):
             print("搜索影片失败\r\n")
             continue
         else:
-            print("搜索结果 当前页 =", search.page)
             print("搜索结果 总页数 =", search.total_pages)
             print("搜索结果 总条数 =", search.total_results)
-
+        
         target_r = None
-        for r in search.results:
-            _zh_title = r["title"]
-            _release_date = r.get("release_date", "")
-            _year = ""
-            if len(_release_date) > 0:
-                _year = str(datetime.strptime(_release_date, "%Y-%m-%d").year)
+        for page_index in range(1, search.total_pages):
+            print("============================")
+            print("搜索第", page_index, "页")
+            search.movie(query=zh_title, language="zh", year=args.year, page=page_index)
 
-            is_filename_match = str_remove_punctuation(
-                zh_title) == str_remove_punctuation(_zh_title)
-            is_year_match = "." + _year + "." in filename
-            is_match = is_filename_match and is_year_match
-            print("匹配检查", _zh_title, _release_date, is_match)
-            if is_match:  # 文件名 + 年份匹配
-                target_r = r
+            for r in search.results:
+                _zh_title = r["title"]
+                _release_date = r.get("release_date", "")
+                _year = ""
+                if len(_release_date) > 0:
+                    _year = str(datetime.strptime(_release_date, "%Y-%m-%d").year)
+
+                is_filename_match = str_remove_punctuation(
+                    zh_title) == str_remove_punctuation(_zh_title)
+                is_year_match = "." + _year + "." in filename
+                is_match = is_filename_match and is_year_match
+                print("匹配检查", _zh_title, _release_date, is_match)
+                if is_match:  # 文件名 + 年份匹配
+                    target_r = r
+                    break
+            
+            if target_r is not None:
                 break
+            
+            page_index = page_index + 1
 
+        print("============================")
+            
         if target_r is None:
             print("影片信息匹配失败\r\n")
             continue
@@ -211,8 +222,9 @@ def scan(movie_dir_path):
             srtFilePath = os.path.join(
                 movie_dir_path, filename, filename + ".srt")
             with open(srtFilePath, "w", encoding="utf-8") as srt:
-                write_srt(result["segments"], file=srt)
-            print("已生成srt文件", "===>", srtFilePath)
+                # write_srt(result["segments"], file=srt)
+                # print("已生成srt文件", "===>", srtFilePath)
+                print("write_srt 函数已经变更！！", "===>", srtFilePath)
 
             os.remove(tmpMp3FilePath)
             print("已删除临时mp3文件", "===>", tmpMp3FilePath)
