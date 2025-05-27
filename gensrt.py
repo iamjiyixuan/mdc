@@ -2,7 +2,7 @@ import os
 import argparse
 import ffmpy
 import whisper
-from whisper.utils import write_srt
+from whisper.utils import get_writer
 
 # 命令行参数解析
 parser = argparse.ArgumentParser()
@@ -41,7 +41,8 @@ def gen_srt(audio_file: str, language: str = "English", verbose: bool = False) -
         tmpMp3FilePath, language=language, beam_size=5, best_of=5, verbose=verbose)
     srtFilePath = os.path.join(os.getcwd(), filename + ".srt")
     with open(srtFilePath, "w", encoding="utf-8") as srt:
-        write_srt(result["segments"], file=srt)
+        writer = get_writer("srt", os.getcwd())
+        writer(result, tmpMp3FilePath)
     return srtFilePath
 
 
@@ -57,15 +58,15 @@ if __name__ == "__main__":
         if isDirectory:
             continue
 
-        print("=====================", file, "=====================")
-
         suffix = os.path.splitext(file)[-1]
-        print("suffix =", suffix)
-
         isMovieFile = suffix.lower().endswith((".mp4", ".mkv", ".avi"))
+
         if not isMovieFile:
-            print("非视频文件，不处理\r\n")
+            # 非视频文件，不处理
             continue
+
+        print("====================================================================================")
+        print("正在视频处理文件：" + file)
 
         tmpMp3FilePath = extract_audio(file=file, verbose=args.verbose)
         print("已生成临时mp3文件", "===>", tmpMp3FilePath)
@@ -77,4 +78,4 @@ if __name__ == "__main__":
 
         os.remove(tmpMp3FilePath)
         print("已删除临时mp3文件", "===>", tmpMp3FilePath)
-        break
+        print("\r\n")
