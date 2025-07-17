@@ -1,0 +1,12 @@
+[project]
+name = "mdc"
+version = "0.1.0"
+requires-python = ">=3.12"
+dependencies = [
+    "chardet>=5.2.0",
+    "configparser>=7.2.0",
+    "ffmpy>=0.6.0",
+    "lxml>=6.0.0",
+    "openai-whisper>=20250625",
+    "tmdbsimple>=2.9.1",
+]
